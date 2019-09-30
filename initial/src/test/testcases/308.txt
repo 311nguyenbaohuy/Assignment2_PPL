@@ -1,0 +1,4 @@
+
+        float a, a[0];
+        string b, b[10];
+        

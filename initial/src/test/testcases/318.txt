@@ -1,0 +1,8 @@
+
+        float[] main(){
+        
+        }
+        string[] main(){
+    
+        }
+        

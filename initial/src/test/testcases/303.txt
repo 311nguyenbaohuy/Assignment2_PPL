@@ -1,0 +1,1 @@
+float main[1], a[0];

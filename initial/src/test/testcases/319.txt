@@ -1,0 +1,10 @@
+
+        int a, b, c;
+        float[] main(){
+        
+        }
+        string[] main(){
+    
+        }
+        string d, e, f;
+        
