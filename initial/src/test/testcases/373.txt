@@ -1,0 +1,8 @@
+
+        void main(){
+            int a;
+            for (1;1;1)
+                do{}
+                while(1);
+        }
+        

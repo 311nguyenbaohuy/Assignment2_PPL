@@ -105,23 +105,7 @@ class ASTGeneration(MCVisitor):
 
     # stmt : if_stmt | do_while_stmt | for_stmt | break_stmt | continue_stmt | return_stmt | expr_stmt | block_stmt;
     def visitStmt(self, ctx:MCParser.StmtContext):
-        if (ctx.if_stmt()):
-            return self.visit(ctx.if_stmt())
-        elif (ctx.do_while_stmt()):
-            return self.visit(ctx.do_while_stmt())
-        elif (ctx.for_stmt()):
-            return self.visit(ctx.for_stmt())
-        elif (ctx.break_stmt()):
-            return self.visit(ctx.break_stmt())
-        elif (ctx.continue_stmt()):
-            return self.visit(ctx.continue_stmt())
-        elif (ctx.return_stmt()):
-            return self.visit(ctx.return_stmt())
-        elif (ctx.expr_stmt()):
-            return self.visit(ctx.expr_stmt())
-        else:
-            # SE XUAT HIEN TH [ [[]]]
-            return self.visit(ctx.block_stmt())
+        return self.visit(ctx.getChild(0))
 
 
     # if_stmt : IF LB expr RB stmt (ELSE stmt)?;
@@ -180,7 +164,7 @@ class ASTGeneration(MCVisitor):
     # expr : expr1 ASSIGN_OP expr | expr1;
     def visitExpr(self, ctx:MCParser.ExprContext):
         if (ctx.getChildCount() == 3):
-            op = '='
+            op = ctx.getChild(1).getText()
             left = self.visit(ctx.expr1())
             right = self.visit(ctx.expr())
             return BinaryOp(op, left, right)
@@ -191,7 +175,7 @@ class ASTGeneration(MCVisitor):
     # expr1 : expr1 OR_OP expr2 | expr2;
     def visitExpr1(self, ctx:MCParser.Expr1Context):
         if (ctx.getChildCount() == 3):
-            op = '||'
+            op = ctx.getChild(1).getText()
             left = self.visit(ctx.expr1())
             right = self.visit(ctx.expr2())
             return BinaryOp(op, left, right)
@@ -202,7 +186,7 @@ class ASTGeneration(MCVisitor):
     # expr2 : expr2 AND_OP expr3 | expr3;
     def visitExpr2(self, ctx:MCParser.Expr2Context):
         if (ctx.getChildCount() == 3):
-            op = '&&'
+            op = ctx.getChild(1).getText()
             left = self.visit(ctx.expr2())
             right = self.visit(ctx.expr3())
             return BinaryOp(op, left, right)
@@ -215,11 +199,7 @@ class ASTGeneration(MCVisitor):
         if (ctx.getChildCount() == 1):
             return self.visit(ctx.expr4(0))
         else:
-            op = ''
-            if (ctx.EQUAL_OP()):
-                op = '=='
-            else:
-                op = '!='
+            op = ctx.getChild(1).getText()
             left = self.visit(ctx.expr4(0))
             right = self.visit(ctx.expr4(1))
             return BinaryOp(op, left, right)
@@ -230,17 +210,9 @@ class ASTGeneration(MCVisitor):
         if (ctx.getChildCount() == 1):
             return self.visit(ctx.expr5(0))
         else:
-            op = ''
-            if (ctx.LESS_OP()):
-                op = '<'
-            elif (ctx.LESS_EQUAL_OP()):
-                op = '<='
-            elif (ctx.GREATER_EQUAL_OP()):
-                op = '>='
-            elif (ctx.GREATER_OP()):
-                op = '>'
             left = self.visit(ctx.expr5(0))
             right = self.visit(ctx.expr5(1))
+            op = ctx.getChild(1).getText()
             return BinaryOp(op, left, right)
 
 
@@ -249,11 +221,7 @@ class ASTGeneration(MCVisitor):
         if (ctx.getChildCount() == 1):
             return self.visit(ctx.expr6())
         else:
-            op = ''
-            if (ctx.ADD_OP()):
-                op = '+'
-            else:
-                op = '-'
+            op = ctx.getChild(1).getText()
             left = self.visit(ctx.expr5())
             right = self.visit(ctx.expr6())
             return BinaryOp(op, left, right)
@@ -264,13 +232,7 @@ class ASTGeneration(MCVisitor):
         if (ctx.getChildCount() == 1):
             return self.visit(ctx.expr7())
         else:
-            op = ''
-            if (ctx.DIV_OP()):
-                op = '/'
-            elif (ctx.MUL_OP()):
-                op = '*'
-            else:
-                op = '%'
+            op = ctx.getChild(1).getText()
             left = self.visit(ctx.expr6())
             right = self.visit(ctx.expr7())
             return BinaryOp(op, left, right)
@@ -281,12 +243,7 @@ class ASTGeneration(MCVisitor):
         if (ctx.getChildCount() == 1):
             return self.visit(ctx.expr8())
         else:
-            op =''
-            if (ctx.SUB_OP()):
-                op = '-'
-            else:
-                op = '!'
-            
+            op = ctx.getChild(0).getText()
             expr = self.visit(ctx.expr7())
             return UnaryOp(op, expr)
 

@@ -569,22 +569,293 @@ class ASTGenSuite(unittest.TestCase):
     def test53(self):
         input = """
         int main(){
-            do
-                a = 1;
-            while(a);
+            if (a > 10)
+                a == 1 + 2;
+            else
+                a(1);
         }
         """
-        expect = str(Program([FuncDecl(Id('main'),[],IntType(),Block([Dowhile([BinaryOp('=',Id('a'),IntLiteral(1))],Id('a'))]))]))
+        expect = str(Program([FuncDecl(Id('main'),[],IntType(),Block([If(BinaryOp('>',Id('a'),IntLiteral(10)),BinaryOp('==',Id('a'),BinaryOp('+',IntLiteral(1),IntLiteral(2))),CallExpr(Id('a'),[IntLiteral(1)]))]))]))
         self.assertTrue(TestAST.checkASTGen(input,expect,353))
 
 
     def test54(self):
         input = """
         int main(){
-            for (a;a;a)
+            if (a > 10){
+                a <= 1 + 2;
+            }
+            else{
+                a(1);
+            }
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],IntType(),Block([If(BinaryOp('>',Id('a'),IntLiteral(10)),Block([BinaryOp('<=',Id('a'),BinaryOp('+',IntLiteral(1),IntLiteral(2)))]),Block([CallExpr(Id('a'),[IntLiteral(1)])]))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,354))
+
+
+    def test55(self):
+        input = """
+        int main(){
+            if (a > 10)
+                if (b > 0)
+                    if (c > 0)
+                        a = 1;
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],IntType(),Block([If(BinaryOp('>',Id('a'),IntLiteral(10)),If(BinaryOp('>',Id('b'),IntLiteral(0)),If(BinaryOp('>',Id('c'),IntLiteral(0)),BinaryOp('=',Id('a'),IntLiteral(1)))))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,355))
+
+    def test56(self):
+        input = """
+        void main(int a[]){
+            if (a > 10)
+                if (b > 0)
+                    if (c > 0)
+                        a = 1;
+                    else
+                        a = 1;
+                else
+                    (a[3]) = 2;
+            else
+                (a[3])[3] = foo(1) / 2;
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[VarDecl('a',ArrayPointerType(IntType()))],VoidType(),Block([If(BinaryOp('>',Id('a'),IntLiteral(10)),If(BinaryOp('>',Id('b'),IntLiteral(0)),If(BinaryOp('>',Id('c'),IntLiteral(0)),BinaryOp('=',Id('a'),IntLiteral(1)),BinaryOp('=',Id('a'),IntLiteral(1))),BinaryOp('=',ArrayCell(Id('a'),IntLiteral('3')),IntLiteral(2))),BinaryOp('=',ArrayCell(ArrayCell(Id('a'),IntLiteral(3)),IntLiteral(3)),BinaryOp('/',CallExpr(Id('foo'),[IntLiteral(1)]),IntLiteral(2))))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,356))
+
+
+    def test57(self):
+        input = """
+        void main(int a[]){
+            do
+                a + 1;
+            while(1);
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[VarDecl('a',ArrayPointerType(IntType()))],VoidType(),Block([Dowhile([BinaryOp('+',Id('a'),IntLiteral(1))],IntLiteral(1))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,357))
+
+
+    def test58(self):
+        input = """
+        void main(){
+            do{
+                a + 1;
+            }
+            while(1);
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([Dowhile([Block([BinaryOp('+',Id('a'),IntLiteral(1))])],IntLiteral(1))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,358))
+
+
+    def test59(self):
+        input = """
+        void main(){
+            do{
+            }
+            while(1);
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([Dowhile([Block([])],IntLiteral(1))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,359))
+
+
+    def test60(self):
+        input = """
+        void main(){
+            do{
+                {}
+            }
+            while(1>2);
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([Dowhile([Block([Block([])])],BinaryOp('>',IntLiteral(1),IntLiteral(2)))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,360))
+
+
+    def test61(self):
+        input = """
+        void main(){
+            for (a; a; a)
                 a = 1;
         }
         """
-        expect = str(Program([FuncDecl(Id('main'),[],IntType(),Block([Dowhile([BinaryOp('=',Id('a'),IntLiteral(1))],Id('a'))]))]))
-        self.assertTrue(TestAST.checkASTGen(input,expect,354))
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([For(Id('a'),Id('a'),Id('a'),BinaryOp('=',Id('a'),IntLiteral(1)))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,361))
+
+
+    def test62(self):
+        input = """
+        void main(){
+            for (a; a; a){
+                a = 1;
+            }
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([For(Id('a'),Id('a'),Id('a'),Block([BinaryOp('=',Id('a'),IntLiteral(1))]))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,362))
+
+
+    def test63(self):
+        input = """
+        void main(){
+            for (i = 10; i > 1.2; --i){
+                a = 1;
+            }
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([For(BinaryOp('=',Id('i'),IntLiteral(10)),BinaryOp('>',Id('i'),FloatLiteral(1.2)),UnaryOp('-',UnaryOp('-',Id('i'))),Block([BinaryOp('=',Id('a'),IntLiteral(1))]))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,363))
+
+
+    def test64(self):
+        input = """
+        void main(){
+            break;
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([Break()]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,364))
+
+
+    def test65(self):
+        input = """
+        void main(){
+            for(1;1;1){
+                break;
+            }
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([For(IntLiteral(1),IntLiteral(1),IntLiteral(1),Block([Break()]))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,365))
+
+
+    def test66(self):
+        input = """
+        void main(){
+            for(1;1;1)
+                break;
+
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([For(IntLiteral(1),IntLiteral(1),IntLiteral(1),Break())]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,366))
+
+
+    def test67(self):
+        input = """
+        void main(){
+            do{
+                break;
+            }
+            while(1);
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([Dowhile([Block([Break()])],IntLiteral(1))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,367))
+
+
+    def test68(self):
+        input = """
+        void main(){
+            do{
+                continue;
+            }
+            while(1);
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([Dowhile([Block([Continue()])],IntLiteral(1))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,368))
+
+
+    def test69(self):
+        input = """
+        void main(){
+            int a;
+            if (a)
+                a = 1;
+            return a;
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([VarDecl('a',IntType()),If(Id('a'),BinaryOp('=',Id('a'),IntLiteral(1))),Return(Id('a'))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,369))
+
+
+    def test70(self):
+        input = """
+        void main(){
+            int a;
+            if (a)
+                do{
+                    a = 1;
+                }
+                while(1);
+            else
+                return a;
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([VarDecl('a',IntType()),If(Id('a'),Dowhile([Block([BinaryOp('=',Id('a'),IntLiteral(1))])],IntLiteral(1)),Return(Id('a')))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,370))
+
+
+    def test71(self):
+        input = """
+        void main(){
+            int a;
+            if (a)
+                for ( a < 100; (b+1)[2]/3; c (1+2)%3 > 1)
+                {
+                }
+            else
+                return a;
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([VarDecl('a',IntType()),If(Id('a'),For(BinaryOp('<',Id('a'),IntLiteral(100)),BinaryOp('/',ArrayCell(BinaryOp('+',Id('b'),IntLiteral(1)),IntLiteral(2)),IntLiteral(3)),BinaryOp('>',BinaryOp('%',CallExpr(Id('c'),[BinaryOp('+',IntLiteral(1),IntLiteral(2))]),IntLiteral(3)),IntLiteral(1)),Block([])),Return(Id('a')))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,371))
+
+
+    def test72(self):
+        input = """
+        void main(){
+            int a;
+            for (1;1;1)
+                if (1) 1;
+                else 1;
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([VarDecl('a',IntType()),For(IntLiteral(1),IntLiteral(1),IntLiteral(1),If(IntLiteral(1),IntLiteral(1),IntLiteral(1)))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,372))
+
+
+    def test73(self):
+        input = """
+        void main(){
+            int a;
+            for (1;1;1)
+                do{}
+                while(1);
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([VarDecl('a',IntType()),For(IntLiteral(1),IntLiteral(1),IntLiteral(1),Dowhile([Block([])],IntLiteral(1)))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,373))
+
+
+    def test74(self):
+        input = """
+        void main(){
+            int a;
+            for (1;1;1){
+                do{}
+                while(1);
+                {
+                do{}
+                while(1);
+                }
+            }
+        }
+        """
+        expect = str(Program([FuncDecl(Id('main'),[],VoidType(),Block([VarDecl('a',IntType()),For(IntLiteral(1),IntLiteral(1),IntLiteral(1),Block([Dowhile([Block([])],IntLiteral(1)),Block([Dowhile([Block([])],IntLiteral(1))])]))]))]))
+        self.assertTrue(TestAST.checkASTGen(input,expect,374))
 

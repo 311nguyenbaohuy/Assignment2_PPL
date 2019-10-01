@@ -1,0 +1,14 @@
+
+        void main(int a[]){
+            if (a > 10)
+                if (b > 0)
+                    if (c > 0)
+                        a = 1;
+                    else
+                        a = 1;
+                else
+                    (a[3]) = 2;
+            else
+                (a[3])[3] = foo(1) / 2;
+        }
+        

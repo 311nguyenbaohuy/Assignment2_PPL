@@ -1,0 +1,8 @@
+
+        void main(){
+            do{
+                continue;
+            }
+            while(1);
+        }
+        
