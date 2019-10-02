@@ -1,0 +1,6 @@
+
+        void main(){
+            for (foo(1); foo(a[2]) == 1; foo(2) >= 1)
+                continue;
+        }
+        

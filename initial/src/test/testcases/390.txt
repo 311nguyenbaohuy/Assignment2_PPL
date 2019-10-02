@@ -1,0 +1,6 @@
+
+        void main(){
+        }
+        int a[1];
+        string b[1];
+        

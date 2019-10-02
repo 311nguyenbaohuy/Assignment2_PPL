@@ -1,0 +1,9 @@
+
+        int a;
+        string a(){
+            int a, b, c;
+            if (a % b == c % d){
+                print (a + b + c + d);
+            }
+        }
+        

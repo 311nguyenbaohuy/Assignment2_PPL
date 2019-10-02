@@ -1,0 +1,8 @@
+
+        void main(){
+        }
+        int[] main(int a[]){
+            int a[1];
+            print(a[2]);
+        }
+        

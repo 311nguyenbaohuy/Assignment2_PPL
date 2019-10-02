@@ -1,0 +1,7 @@
+
+        void foo(int n, int arr[]){
+            if (n == 0) return;
+            print(arr[n]);
+            foo(n - 1, arr);
+        }
+        

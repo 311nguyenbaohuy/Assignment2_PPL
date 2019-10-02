@@ -1,0 +1,1 @@
+Program([FuncDecl(Id(main),[],VoidType,Block([If(CallExpr(Id(foo),[StringLiteral(true)]),Block([CallExpr(Id(print),[CallExpr(Id(foo),[StringLiteral(true)])])]))]))])

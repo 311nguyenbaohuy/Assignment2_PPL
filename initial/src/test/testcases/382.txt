@@ -1,0 +1,7 @@
+
+        string main(){
+            print(abc);
+        }
+        void foo(){}
+        boolean isPrime(int n){return n;}
+        

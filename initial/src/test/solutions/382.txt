@@ -1,0 +1,1 @@
+Program([FuncDecl(Id(main),[],StringType,Block([CallExpr(Id(print),[Id(abc)])])),FuncDecl(Id(foo),[],VoidType,Block([])),FuncDecl(Id(isPrime),[VarDecl(n,IntType)],BoolType,Block([Return(Id(n))]))])

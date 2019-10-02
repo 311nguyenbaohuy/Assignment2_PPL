@@ -1,0 +1,8 @@
+
+        void main(){
+            for (1; 1; 1)
+            do 
+                break;
+            while(a);
+        }
+        

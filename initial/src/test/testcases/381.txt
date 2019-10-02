@@ -1,0 +1,9 @@
+
+        void main(){
+            // comment 
+            /* */
+            a = "hello world";
+            a = 1.e1;
+            a = true;
+        }
+        

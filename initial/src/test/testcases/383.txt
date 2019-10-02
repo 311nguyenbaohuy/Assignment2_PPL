@@ -1,0 +1,5 @@
+
+        void main(){
+            foo(1.2e1, "abc", true);
+        }
+        
